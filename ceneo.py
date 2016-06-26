@@ -5,19 +5,19 @@ import scrapper
 
 class ProductEntry(scrapper.CrawlerItem):
     name = scrapper.CrawlerField(
-        'div.product-content > h1',
+        "div.product-content > h1",
         lambda value, _, __: value.strip() if value else None,
     )
 
 
 class OfferEntry(scrapper.CrawlerItem):
     shop_name = scrapper.CrawlerField(
-        'td.cell-store-logo > a > img',
-        lambda value, _, __: value['alt'] if value else None,
+        "td.cell-store-logo > a > img",
+        lambda value, _, __: value["alt"] if value else None,
         True,
     )
     price = scrapper.CrawlerField(
-        'td.cell-price > a .price',
+        "td.cell-price > a .price",
         lambda value, _, __: value.text.strip() if value else 0.0,
         True,
     )
@@ -25,7 +25,7 @@ class OfferEntry(scrapper.CrawlerItem):
 
 class OffersEntries(scrapper.CrawlerMultiItem):
     item_class = OfferEntry
-    content_selector = 'tbody > tr.product-offer'
+    content_selector = "tbody > tr.product-offer"
 
 
 def get_product_page(url):

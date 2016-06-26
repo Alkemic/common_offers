@@ -23,7 +23,7 @@ class OfferEntry(scrapper.CrawlerItem):
 
 class OffersEntries(scrapper.CrawlerMultiItem):
     item_class = OfferEntry
-    content_selector = '.offers article'
+    content_selector = ".offers article"
 
 
 def get_search_result(user_id, phrase):

@@ -15,7 +15,7 @@ def index():
 
 @app.route("/ceneo", methods=["POST"])
 def view_ceneo():
-    urls = [url for url in request.form.getlist("url") if url != ""]
+    urls = set(filter(None, request.form.getlist("url")))
     sums = ceneo.get_sumed_offers(urls)
     return jsonify(result=sums)
 
@@ -23,8 +23,8 @@ def view_ceneo():
 @app.route("/allegro", methods=["POST"])
 def view_allrgo():
     sums = allegro.get_sumed_offers(
-        filter(None, request.form.getlist("user")),
-        filter(None, request.form.getlist("item_name"))
+        set(filter(None, request.form.getlist("user"))),
+        set(filter(None, request.form.getlist("item_name"))),
     )
     return jsonify(result=sums)
 
