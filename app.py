@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 from flask import Flask, render_template, jsonify, request
 
-from ceneo import get_sumed_offers
+import ceneo
+import allegro
 
 
 app = Flask(__name__)
@@ -13,9 +14,18 @@ def index():
 
 
 @app.route("/ceneo", methods=["POST"])
-def ceneo():
-    urls = [url for url in request.form.getlist('url') if url != ""]
-    sums = get_sumed_offers(urls)
+def view_ceneo():
+    urls = [url for url in request.form.getlist("url") if url != ""]
+    sums = ceneo.get_sumed_offers(urls)
+    return jsonify(result=sums)
+
+
+@app.route("/allegro", methods=["POST"])
+def view_allrgo():
+    sums = allegro.get_sumed_offers(
+        filter(None, request.form.getlist("user")),
+        filter(None, request.form.getlist("item_name"))
+    )
     return jsonify(result=sums)
 
 
