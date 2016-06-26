@@ -17,8 +17,9 @@ class OfferEntry(scrapper.CrawlerItem):
         True,
     )
     price = scrapper.CrawlerField(
-        'td.cell-price > a > strong',
-        lambda value, _, __: value.strip() if value else 0.0,
+        'td.cell-price > a .price',
+        lambda value, _, __: value.text.strip() if value else 0.0,
+        True,
     )
 
 
