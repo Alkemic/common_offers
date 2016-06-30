@@ -3,6 +3,9 @@ from collections import defaultdict
 import scrapper
 
 
+BASE_URL = "http://www.ceneo.pl"
+
+
 class ProductEntry(scrapper.CrawlerItem):
     name = scrapper.CrawlerField(
         "div.product-content > h1",
@@ -18,7 +21,13 @@ class OfferEntry(scrapper.CrawlerItem):
     )
     price = scrapper.CrawlerField(
         "td.cell-price > a .price",
-        lambda value, _, __: value.text.strip() if value else 0.0,
+        lambda value, _, __: float(str(value.text.strip()).replace(",", "."))
+        if value else 0.0,
+        True,
+    )
+    url = scrapper.CrawlerField(
+        "div.product-name > a",
+        lambda value, _, __: value["href"],
         True,
     )
 
@@ -32,23 +41,29 @@ def get_product_page(url):
     entries = OffersEntries(url)
     product = ProductEntry(url)
 
-    return str(product.name), {
-        str(item.shop_name): float(str(item.price).replace(",", "."))
-        for item in entries
-    }
+    return "%s" % product.name, entries
 
 
 def get_sumed_offers(urls):
     sums = defaultdict(lambda: {"products": [], "price": 0})
     for url in urls:
         name, offers = get_product_page(url)
-        for shop, price in offers.items():
-            sums[shop]["products"].append({"name": name, "price": price})
-            sums[shop]["price"] += price
+        for offer in offers:
+            sums[offer.shop_name]["products"].append({
+                "name": name,
+                "price": offer.price,
+                "url": BASE_URL + offer.url,
+            })
+            sums[offer.shop_name]["price"] += offer.price
 
     sums = [
-        {"shop": s, "products": v["products"], "price": v["price"]}
-        for s, v in sums.items()
+        {
+            "shop": shop,
+            "url": "http://%s" % shop,
+            "products": products["products"],
+            "price": products["price"]
+        }
+        for shop, products in sums.items()
     ]
 
     sums.sort(key=lambda r: r["price"])

@@ -17,10 +17,10 @@ $(document).ready(function() {
                     products = [];
                     row.products.forEach(function(product) {
                         products.push(
-                            product.name + ' ' + product.price.toFixed(2)
+                            '<a href="' + product.url + '">' + product.name + '</a> ' + product.price.toFixed(2)
                         );
                     });
-                    $('<li><b>' + row.shop + ' ' + row.price.toFixed(2) + ' ' + row.products.length + ' prod.</b> (' + products.join(', ') + ')</li>').appendTo(resultsUl);
+                    $('<li><b><a href="' + row.url + '">' + row.shop + '</a> ' + row.price.toFixed(2) + ' ' + row.products.length + ' prod.</b> (' + products.join(', ') + ')</li>').appendTo(resultsUl);
                 });
             }).fail(function(data){
                 loading.hide();
